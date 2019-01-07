@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MeteorologyReport</name>
+    </assembly>
+    <members>
+        <member name="T:MeteorologyReport.Controllers.DevicesController">
+            <summary>
+            Controller to Fetch the details
+            </summary>
+        </member>
+        <member name="F:MeteorologyReport.Controllers.DevicesController.measurementService">
+            <summary>
+            Variable for measurementService.
+            </summary>
+        </member>
+        <member name="M:MeteorologyReport.Controllers.DevicesController.#ctor(Meteorology.Services.Interfaces.IMeasurementService)">
+            <summary>
+            Constructor to initialize variables
+            </summary>
+            <param name="measurementService">measurementService</param>
+        </member>
+        <member name="M:MeteorologyReport.Controllers.DevicesController.GetData(System.String,System.DateTime,Meteorology.Models.Enums.Sensors)">
+            <summary>
+            Collect all of the measurements for one day, one sensor type, and one unit.
+            </summary>
+            <returns>Ok Result</returns>
+        </member>
+        <member name="M:MeteorologyReport.Controllers.DevicesController.GetDataForDevice(System.String,System.DateTime)">
+            <summary>
+            Collect all data points for one unit and one day.
+            </summary>
+            <returns>Ok Result</returns>
+        </member>
+        <member name="T:MeteorologyReport.DependencyResolver">
+            <summary>
+            Dependency Injector
+            </summary>
+        </member>
+        <member name="M:MeteorologyReport.DependencyResolver.Register(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Dependency Injection for Project
+            </summary>
+            <param name="services">Service Collections</param>
+        </member>
+        <member name="M:MeteorologyReport.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Constructor to initialize variables
+            </summary>
+            <param name="configuration">configuration</param>
+        </member>
+        <member name="P:MeteorologyReport.Startup.Configuration">
+            <summary>
+            Configuration
+            </summary>
+        </member>
+    </members>
+</doc>
