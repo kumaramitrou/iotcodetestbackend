@@ -14,11 +14,11 @@ namespace Meteorology.Infrastructure.Interfaces
         /// <returns>csv</returns>
         Task<string> GetContentAsync(string blobName);
 
-        /// <summary>
-        /// Gets the zip file from blob
-        /// </summary>
-        /// <param name="fileName">absolute path of file</param>
-        /// <returns>task</returns>
-        Task GetZipAsync(string fileName);
+        ///// <summary>
+        ///// Gets the zip file from blob
+        ///// </summary>
+        ///// <param name="fileName">absolute path of file</param>
+        ///// <returns>task</returns>
+        //Task GetZipAsync(string blobName);
     }
 }
