@@ -59,6 +59,7 @@ namespace Meteorology.Infrastructure
             CloudBlobContainer container = blobClient.GetContainerReference(configuration.GetConnectionString("ContainerName"));
             //e.g. dockan/humidity/historical.zip
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
+            var file = await blockBlob.DownloadTextAsync();
         }
     }
 }
