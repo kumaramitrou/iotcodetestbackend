@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 
 namespace Meteorology.Infrastructure
@@ -69,20 +70,13 @@ namespace Meteorology.Infrastructure
             try
             {
                 var relativePaths = blobName.Split('/');
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(configuration.GetConnectionString("AzureStorage"));
-                CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-                CloudBlobContainer container = blobClient.GetContainerReference(configuration.GetConnectionString("ContainerName"));
-                CloudBlockBlob blockBlob = container.GetBlockBlobReference($"{relativePaths[0]}/{relativePaths[1]}/{configuration.GetConnectionString("Zip")}");
-                using (var zippedBlob = new MemoryStream())
+                var zippedBlob = await GetFromCache(blobName);
+                using (var zip = new ZipArchive(zippedBlob))
                 {
-                    await blockBlob.DownloadToStreamAsync(zippedBlob);
-                    using (var zip = new ZipArchive(zippedBlob))
+                    var files = zip.Entries.First(t => t.FullName.Equals(relativePaths[2], StringComparison.InvariantCultureIgnoreCase));
+                    using (StreamReader stream = new StreamReader(files.Open()))
                     {
-                        var files = zip.Entries.First(t=>t.FullName.Equals(relativePaths[2], StringComparison.InvariantCultureIgnoreCase));
-                        using (StreamReader stream = new StreamReader(files.Open()))
-                        {
-                            file = stream.ReadToEnd();
-                        }
+                        file = stream.ReadToEnd();
                     }
                 }
                 return file;
@@ -90,6 +84,37 @@ namespace Meteorology.Infrastructure
             catch (Exception)
             {
                 return file;
+            }
+        }
+
+        /// <summary>
+        /// Cache Implementation for Historical Records.
+        /// </summary>
+        /// <param name="fileName">file path</param>
+        /// <returns>MemoryStream</returns>
+        private async Task<MemoryStream> GetFromCache(string fileName)
+        {
+            var relativePaths = fileName.Split('/');
+            var key = $"{relativePaths[0]}/{relativePaths[1]}/{configuration.GetConnectionString("Zip")}";
+            var item = MemoryCache.Default.Get(key) as Byte[];
+            try
+            {
+                if (item == null)
+                {
+                    item = new Byte[1024 * 1024 * 1024];
+                    CloudStorageAccount storageAccount = CloudStorageAccount.Parse(configuration.GetConnectionString("AzureStorage"));
+                    CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                    CloudBlobContainer container = blobClient.GetContainerReference(configuration.GetConnectionString("ContainerName"));
+                    CloudBlockBlob blockBlob = container.GetBlockBlobReference(key);
+                    await blockBlob.DownloadToByteArrayAsync(item, 0);
+                    if (item != null)
+                        MemoryCache.Default.Add(key, item, DateTime.Now.AddMinutes(60));
+                }
+                return new MemoryStream(item);
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }
