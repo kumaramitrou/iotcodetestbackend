@@ -17,13 +17,13 @@ Web API developed in .Net Core to fetch telemetry records from blob and return t
   Http Verb : GET
   Response : Data for particular DeviceId, date and sensor.
   Status Codes : 200 (OK) Successfull Response
-                 400 (Bad Response) For Future Dates.
+                 400 (Bad Request) For Future Dates.
                  
   API Url : /api/v{version}/devices/getdatafordevice/{deviceId}/{date}
   Http Verb : GET
   Response : Data for particular DeviceId and date for all sensors.
   Status Codes : 200 (OK) Successfull Response
-                 400 (Bad Response) For Future Dates.
+                 400 (Bad Request) For Future Dates.
                  
   
   Note : API details can be fetched using swagger url.
